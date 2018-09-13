@@ -1,0 +1,8 @@
+﻿.avatar{
+    width:100px;
+}
+
+.scrollable {
+    max-height: 340px;
+    overflow-y: scroll;
+}

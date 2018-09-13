@@ -1,0 +1,41 @@
+﻿@using TestChat.Models.ViewModels
+@model ChatViewModel
+@{
+    ViewBag.Title = "Chat";
+}
+<div>
+    <div>Chat</div>
+    <div id="scrollView" class="scrollable">
+        @foreach (var message in Model?.Messages)
+        {
+            <div>
+                <div>
+                    <img class="avatar" src="@Url.Action("GetImage", "Account",new { email=message.User })">
+                </div>
+                <div>
+                    <h4 > @message.User @message.Time.ToString()</h4>
+                    <div>@message.Message</div>
+                </div>
+            </div>
+
+        }
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        @using (Html.BeginForm("SendMessage", "Home"))
+        {
+            <div>
+                @Html.TextBoxFor(model => model.Message, new { @class = "form-control", placeholder = "Message" })
+                <span>
+                    <button>Go!</button>
+                </span>
+            </div>
+        }
+
+    </div>
+</div>
+<script>
+    var objDiv = document.getElementById("scrollView");
+    objDiv.scrollTop = objDiv.scrollHeight;
+</script>
