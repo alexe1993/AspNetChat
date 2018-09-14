@@ -1,4 +1,5 @@
-﻿function scrollToBottom() {
+
+function scrollToBottom() {
     var objDiv = document.getElementById("scrollView");
     objDiv.scrollTop = objDiv.scrollHeight;
 }
