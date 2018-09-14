@@ -30,6 +30,8 @@ namespace TestChat
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/mystyle.css"
                       ));
+            bundles.Add(new ScriptBundle("~/bundles/my").Include(
+                      "~/Scripts/myscript.js"));
         }
     }
 }

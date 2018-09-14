@@ -13,7 +13,7 @@
                     <img class="avatar" src="@Url.Action("GetImage", "Account",new { email=message.User })">
                 </div>
                 <div>
-                    <h4 > @message.User @message.Time.ToString()</h4>
+                    <h4> @message.User @message.Time.ToString()</h4>
                     <div>@message.Message</div>
                 </div>
             </div>
@@ -35,7 +35,4 @@
 
     </div>
 </div>
-<script>
-    var objDiv = document.getElementById("scrollView");
-    objDiv.scrollTop = objDiv.scrollHeight;
-</script>
+@Scripts.Render("~/bundles/my")
