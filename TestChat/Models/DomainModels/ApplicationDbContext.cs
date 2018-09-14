@@ -16,5 +16,6 @@ namespace TestChat.Models
         }
 
         public DbSet<ChatMessage> ChatMessages { get; set; }
+        public DbSet<Visitor> Visitors { get; set; }
     }
 }

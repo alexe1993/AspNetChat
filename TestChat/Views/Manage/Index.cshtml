@@ -5,11 +5,11 @@
 
 <h2>@ViewBag.Title.</h2>
 
-<p class="text-success">@ViewBag.StatusMessage</p>
+<p >@ViewBag.StatusMessage</p>
 <div>
     <h4>Изменение параметров учетной записи</h4>
     <hr />
-    <dl class="dl-horizontal">
+    <dl >
         <dt>Пароль:</dt>
         <dd>
             [
@@ -51,7 +51,7 @@
                 using (Html.BeginForm("RemovePhoneNumber", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
                 {
                     @Html.AntiForgeryToken()
-                    <text>[<input type="submit" value="Удалить" class="btn-link" />]</text>
+                    <text>[<input type="submit" value="Удалить"  />]</text>
                 }
             }
             else
@@ -72,7 +72,7 @@
                 {
                     @Html.AntiForgeryToken()
                     <text>Включено
-                    <input type="submit" value="Отключить" class="btn btn-link" />
+                    <input type="submit" value="Отключить"  />
                     </text>
                 }
             }
@@ -82,7 +82,7 @@
                 {
                     @Html.AntiForgeryToken()
                     <text>Отключено
-                    <input type="submit" value="Включить" class="btn btn-link" />
+                    <input type="submit" value="Включить"  />
                     </text>
                 }
             }*@

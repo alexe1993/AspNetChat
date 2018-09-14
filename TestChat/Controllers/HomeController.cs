@@ -4,18 +4,21 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
+using TestChat.Filters;
 using TestChat.Models;
 using TestChat.Models.ViewModels;
 
 namespace TestChat.Controllers
 {
+    [LogFilter]
     public class HomeController : Controller
     {
         ApplicationDbContext applicationDbContext = new ApplicationDbContext();
         public ActionResult Index()
         {
-            return View();
+            return RedirectToAction("Chat");
         }
+
         public ActionResult Chat()
         {
             ChatViewModel chatViewModel = new ChatViewModel();
@@ -41,13 +44,6 @@ namespace TestChat.Controllers
             applicationDbContext.ChatMessages.Add(chatMessage);
             applicationDbContext.SaveChanges();
             return RedirectToAction("Chat");
-        }
-
-        public ActionResult About()
-        {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
         }
 
         public ActionResult Contact()

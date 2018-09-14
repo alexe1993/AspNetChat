@@ -197,6 +197,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Filters\LogFilterAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -220,10 +221,23 @@
     <Compile Include="Migrations\201809111358040_bytes.Designer.cs">
       <DependentUpon>201809111358040_bytes.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201809140639315_log.cs" />
+    <Compile Include="Migrations\201809140639315_log.Designer.cs">
+      <DependentUpon>201809140639315_log.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201809140644449_log_ation.cs" />
+    <Compile Include="Migrations\201809140644449_log_ation.Designer.cs">
+      <DependentUpon>201809140644449_log_ation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201809140648134_log_action_fix.cs" />
+    <Compile Include="Migrations\201809140648134_log_action_fix.Designer.cs">
+      <DependentUpon>201809140648134_log_action_fix.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\DomainModels\ApplicationDbContext.cs" />
     <Compile Include="Models\DomainModels\ApplicationUser.cs" />
     <Compile Include="Models\DomainModels\ChatMessage.cs" />
+    <Compile Include="Models\DomainModels\Visitor.cs" />
     <Compile Include="Models\ViewModels\AccountViewModels.cs" />
     <Compile Include="Models\ViewModels\ChatViewModel.cs" />
     <Compile Include="Models\ViewModels\ManageViewModels.cs" />
@@ -289,7 +303,6 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
@@ -330,6 +343,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201809111358040_bytes.resx">
       <DependentUpon>201809111358040_bytes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201809140639315_log.resx">
+      <DependentUpon>201809140639315_log.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201809140644449_log_ation.resx">
+      <DependentUpon>201809140644449_log_ation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201809140648134_log_action_fix.resx">
+      <DependentUpon>201809140648134_log_action_fix.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

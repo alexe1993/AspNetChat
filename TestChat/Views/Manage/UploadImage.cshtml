@@ -4,6 +4,9 @@
 }
 
 <h2>UploadImage</h2>
+<div>
+    <img src="@Url.Action("GetCurrencUserImage", "Account")">
+</div>
 @using (Html.BeginForm("UploadImage", "Manage", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     <input type="file" name="upload" /><br>

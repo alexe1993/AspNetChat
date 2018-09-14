@@ -53,6 +53,8 @@ namespace TestChat.Controllers
             }
         }
 
+
+        [AllowAnonymous]
         public ActionResult GetImage(string email)
         {
             var user =_applicationDbContext.Users.FirstOrDefault(usr => usr.Email == email);
@@ -61,6 +63,12 @@ namespace TestChat.Controllers
             else
                 return File(user.Avatar, "image/jpg");
 
+        }
+
+        public ActionResult GetCurrencUserImage()
+        {
+            var email = HttpContext.GetOwinContext().Authentication.User.Identity.Name;
+            return GetImage(email);
         }
 
 
