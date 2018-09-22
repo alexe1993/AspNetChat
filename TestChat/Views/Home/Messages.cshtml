@@ -1,0 +1,22 @@
+﻿@using TestChat.Models.ViewModels
+@model ChatViewModel
+@{
+    ViewBag.Title = "Chat";
+}
+<div id="messages">
+    @if (Model?.Messages != null)
+    {
+        foreach (var message in Model?.Messages)
+        {
+            <div class="message">
+                <div?>@message.User</div?>
+                <br />
+                <div?>@message.Time</div?>
+                <br />
+                <div?>@message.Message</div?>
+                <br />
+                <br />
+            </div>
+        }
+    }
+</div>

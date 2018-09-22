@@ -3,36 +3,56 @@
 @{
     ViewBag.Title = "Chat";
 }
-<div>
-    <div>Chat</div>
-    <div id="scrollView" class="scrollable">
-        @foreach (var message in Model?.Messages)
-        {
-            <div>
-                <div>
-                    <img class="avatar" src="@Url.Action("GetImage", "Account",new { email=message.User })">
-                </div>
-                <div>
-                    <h4> @message.User @message.Time.ToString()</h4>
-                    <div>@message.Message</div>
-                </div>
-            </div>
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/Scripts/jquery.unobtrusive-ajax.js")
 
-        }
-    </div>
-</div>
 <div class="row">
     <div class="col-md-12">
-        @using (Html.BeginForm("SendMessage", "Home"))
+        <div id="results" class="scrollable"></div>
+      
+        <div>
+            <input type="text" name="Message" id="input" />
+            <input id="go" type="submit" value="Go" />
+        </div>
+        @using (Ajax.BeginForm("Messages", "Home", new AjaxOptions { UpdateTargetId = "results", InsertionMode = InsertionMode.Replace }))
         {
             <div>
-                @Html.TextBoxFor(model => model.Message, new { @class = "form-control", placeholder = "Message" })
-                <span>
-                    <button>Go!</button>
-                </span>
+                <input hidden="hidden" id="goHidden" type="submit" value="Go" />
             </div>
         }
 
     </div>
 </div>
-@Scripts.Render("~/bundles/my")
+<script>
+    $(document).ready(function () {
+        var prevCount = 0;
+        function scrollToBotton() {
+            $(".scrollable").scrollTop($(".scrollable")[0].scrollHeight);
+        }
+        var uri =  @Html.Raw(HttpUtility.JavaScriptStringEncode(
+                  new Uri(new Uri(this.Context.Request.Url.GetLeftPart(UriPartial.Authority)),
+                  Url.Content("~/Home/Messages")
+                  ).ToString(), true));
+        function sendMessage(message) {
+            prevCount = $(".message").length;
+            $("#results").load(uri, { Message: message }, function () {
+                if (message) {
+                    $("#input")[0].value = "";
+                }
+                var count = $(".message").length;
+                if (count != prevCount) {
+                    scrollToBotton();
+                }
+            });       
+        }
+        $("#go").click(function () {
+            sendMessage($("#input")[0].value);
+        });
+        function autoClick() {
+            sendMessage("");
+        }
+        autoClick();
+        setInterval(autoClick, 1000);
+    });
+</script>
+

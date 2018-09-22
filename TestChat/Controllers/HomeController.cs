@@ -19,6 +19,21 @@ namespace TestChat.Controllers
             return RedirectToAction("Chat");
         }
 
+        public ActionResult JavascriptEvents()
+        {
+            return View();
+        }
+
+        public ActionResult Jquery()
+        {
+            return View();
+        }
+
+        public ActionResult TestForm()
+        {
+            return View();
+        }
+
         public ActionResult Chat()
         {
             ChatViewModel chatViewModel = new ChatViewModel();
@@ -26,24 +41,35 @@ namespace TestChat.Controllers
             {
                 Message = item.Text,
                 Time = item.Time,
-                User = item.User!=null? item.User.Email:"Anonim"
+                User = item.User != null ? item.User.Email : "Anonim"
             }).ToArray();
             return View(chatViewModel);
         }
 
-        public ActionResult SendMessage(ChatViewModel chatView)
+        public ActionResult Messages(ChatViewModel chatView)
         {
-            var userEmail = HttpContext.GetOwinContext().Authentication.User.Identity.Name;
-            var user = applicationDbContext.Users.FirstOrDefault(item => item.Email == userEmail);
-            ChatMessage chatMessage = new ChatMessage()
+            if (!string.IsNullOrEmpty(chatView.Message))
             {
-                Text = chatView.Message,
-                Time = DateTime.Now,
-                User = user
-            };
-            applicationDbContext.ChatMessages.Add(chatMessage);
-            applicationDbContext.SaveChanges();
-            return RedirectToAction("Chat");
+                var userEmail = HttpContext.GetOwinContext().Authentication.User.Identity.Name;
+                var user = applicationDbContext.Users.FirstOrDefault(item => item.Email == userEmail);
+                ChatMessage chatMessage = new ChatMessage()
+                {
+                    Text = chatView.Message,
+                    Time = DateTime.Now,
+                    User = user
+                };
+                applicationDbContext.ChatMessages.Add(chatMessage);
+                applicationDbContext.SaveChanges();
+            }
+
+            ChatViewModel chatViewModel = new ChatViewModel();
+            chatViewModel.Messages = applicationDbContext.ChatMessages.Select(item => new MessageViewModel()
+            {
+                Message = item.Text,
+                Time = item.Time,
+                User = item.User != null ? item.User.Email : "Anonim"
+            }).ToArray();
+            return PartialView(chatViewModel);
         }
 
         public ActionResult Contact()
