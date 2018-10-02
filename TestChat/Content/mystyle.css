@@ -1,4 +1,11 @@
-﻿.avatar{
+﻿@font-face {
+    font-family: UbuntuMono;
+    src: url('../fonts/UbuntuMono-R.ttf') format('truetype');
+}
+body {
+    font-family: UbuntuMono;
+}
+.avatar{
     width:100px;
 }
 
@@ -6,19 +13,64 @@
     height: 300px;
     overflow-y: scroll;
 }
-.testClass {
-    font-family: Verdana;
-    color: green;
+.menu{
 }
-.rect {
-    position: absolute;
-    width: 50px;
-    height: 50px;
-    background-color: red;
+.header {
+    grid-area: header;
+    font-size:80px;
 }
-.rectBig {
-    position: absolute;
-    width: 100px;
-    height: 100px;
-    background-color: green;
+.menu {
+    grid-area: menu;
+}
+.content {
+    grid-area: content;
+}
+.footer {
+    grid-area: footer;
+}
+.container {
+    justify-content: center;
+    display: grid;
+    grid-template-rows: 100px auto 100px;
+    grid-template-areas: "header header header" "menu content content" "footer footer footer";
+}
+.message-text{
+    grid-column:1;
+}
+.message-button{
+    grid-column:2;
+}
+.chat-view {
+    grid-area: chat-view;
+}
+.chat-input {
+    justify-content: stretch;
+    grid-area: chat-input;
+    display: grid;
+    grid-template-columns: auto 80px;
+    grid-template-rows: 40px;
+}
+.chat {
+    justify-content: center;
+    display: grid;
+    grid-template-columns: 500px 40px;
+    grid-template-rows: auto;
+    grid-template-areas: "chat-view" "chat-input";
+}
+@media (min-width: 1001px) {
+    .container {
+        grid-template-columns: 200px 600px 200px;
+    }
+}
+@media (min-width: 800px) and (max-width: 1000px) {
+    .container {
+        grid-template-columns: 200px 400px 200px;
+    }
+}
+@media (max-width: 799px) {
+    .container {
+        grid-template-columns: auto;
+        grid-template-rows: 100px auto auto 100px;
+        grid-template-areas: "header" "menu" "content" "footer";
+    }
 }

@@ -6,23 +6,15 @@
 @Scripts.Render("~/bundles/jquery")
 @Scripts.Render("~/Scripts/jquery.unobtrusive-ajax.js")
 
-<div class="row">
-    <div class="col-md-12">
-        <div id="results" class="scrollable"></div>
-      
-        <div>
-            <input type="text" name="Message" id="input" />
-            <input id="go" type="submit" value="Go" />
-        </div>
-        @using (Ajax.BeginForm("Messages", "Home", new AjaxOptions { UpdateTargetId = "results", InsertionMode = InsertionMode.Replace }))
-        {
-            <div>
-                <input hidden="hidden" id="goHidden" type="submit" value="Go" />
-            </div>
-        }
 
+<div class="chat">
+    <div id="results" class="scrollable chat-view"></div>
+    <div class="chat-input">
+        <input class="message-text" type="text" name="Message" id="input" />
+        <input class="message-button" id="go" type="submit" value="Go" />
     </div>
 </div>
+
 <script>
     $(document).ready(function () {
         var prevCount = 0;
@@ -43,10 +35,16 @@
                 if (count != prevCount) {
                     scrollToBotton();
                 }
-            });       
+            });
         }
-        $("#go").click(function () {
+        function sendMessageFromInput() {
             sendMessage($("#input")[0].value);
+        }
+        $("#go").bind("click", sendMessageFromInput);
+        $("#input").bind("keypress", function (e) {
+            if (e.keyCode ==13) {
+                sendMessageFromInput();
+            }
         });
         function autoClick() {
             sendMessage("");

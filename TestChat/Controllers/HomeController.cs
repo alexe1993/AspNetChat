@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -14,6 +15,12 @@ namespace TestChat.Controllers
     public class HomeController : Controller
     {
         ApplicationDbContext applicationDbContext = new ApplicationDbContext();
+
+        public string Test(string test)
+        {
+            return  JsonConvert.SerializeObject(new ChatViewModel() { Message = "testMessage" });
+        }
+
         public ActionResult Index()
         {
             return RedirectToAction("Chat");
