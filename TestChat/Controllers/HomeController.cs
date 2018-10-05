@@ -53,6 +53,13 @@ namespace TestChat.Controllers
             return View(chatViewModel);
         }
 
+        public string GetLastMessageCount()
+        {
+            return
+                applicationDbContext.
+                ChatMessages.Count().ToString();
+        }
+
         public ActionResult Messages(ChatViewModel chatView)
         {
             if (!string.IsNullOrEmpty(chatView.Message))

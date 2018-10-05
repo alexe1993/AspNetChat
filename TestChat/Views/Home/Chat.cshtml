@@ -38,12 +38,18 @@
                   new Uri(new Uri(this.Context.Request.Url.GetLeftPart(UriPartial.Authority)),
                   Url.Content("~/Home/Messages")
                   ).ToString(), true));
+                var uri1 =  @Html.Raw(HttpUtility.JavaScriptStringEncode(
+                  new Uri(new Uri(this.Context.Request.Url.GetLeftPart(UriPartial.Authority)),
+                  Url.Content("~/Home/GetLastMessageCount")
+                  ).ToString(), true));
         var first = true;
         function sendMessage(message,fromMe) {
             prevCount = $(".message").length;
             var scrollFromTop = $(".scrollable").scrollTop() + $(".scrollable").height();
             var scrollHeight = $(".scrollable")[0].scrollHeight;
             var lastMessageheight = $(".message").last().height();
+            $.get(uri1, function (data) {
+                if (prevCount == parseInt(data)&&!message) return;
             $("#results").load(uri, { Message: message }, function () {
                 if (message) {
                     $("#input")[0].value = "";
@@ -60,7 +66,8 @@
                 else {
                     if (!$(".newMessages").is(":visible"))
                         newMessageDiv.hide();
-                }                
+                }
+                });
             });
         }
         function sendMessageFromInput() {
