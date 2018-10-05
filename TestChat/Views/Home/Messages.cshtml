@@ -3,20 +3,15 @@
 @{
     ViewBag.Title = "Chat";
 }
-<div id="messages">
-    @if (Model?.Messages != null)
-    {
-        foreach (var message in Model?.Messages)
+@if (Model?.Messages != null)
+{
+    foreach (var message in Model?.Messages)
         {
             <div class="message">
-                <div?>@message.User</div?>
-                <br />
-                <div?>@message.Time</div?>
-                <br />
-                <div?>@message.Message</div?>
-                <br />
+                <span class="name">@message.User</span>
+                <span class="time">@message.Time</span>
+                <div class="inlet-text">@message.Message</div>
                 <br />
             </div>
         }
-    }
-</div>
+}

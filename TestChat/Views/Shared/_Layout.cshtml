@@ -12,18 +12,8 @@
     <div class="container">
         <div class="header">Simple chat</div>
         <div class="menu">
-            <div>
-                @Html.ActionLink("Имя приложения", "Index", "Home", new { area = "" })
-            </div>
-            <div>
-
-                <ul>
-                    <li>@Html.ActionLink("Домашняя страница", "Index", "Home")</li>
-                    <li>@Html.ActionLink("Контакт", "Contact", "Home")</li>
-                    <li>@Html.ActionLink("Chat", "Chat", "Home")</li>
-                </ul>
-                @Html.Partial("_LoginPartial")
-            </div>
+            @Html.ActionLink("Chat", "Chat", "Home")
+            @Html.Partial("_LoginPartial")
         </div>
         <div class="content">
             @RenderBody()

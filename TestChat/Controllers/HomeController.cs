@@ -75,7 +75,7 @@ namespace TestChat.Controllers
                 Message = item.Text,
                 Time = item.Time,
                 User = item.User != null ? item.User.Email : "Anonim"
-            }).ToArray();
+            }).OrderBy(item=>item.Time).ToArray();
             return PartialView(chatViewModel);
         }
 

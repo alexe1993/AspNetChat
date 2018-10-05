@@ -8,37 +8,63 @@
 
 
 <div class="chat">
-    <div id="results" class="scrollable chat-view"></div>
+    <div id="results" class="results scrollable chat-view">
+    </div>
+    <div class="newMessages">New mesages</div>
     <div class="chat-input">
-        <input class="message-text" type="text" name="Message" id="input" />
-        <input class="message-button" id="go" type="submit" value="Go" />
+        <input class="message-text" placeholder="Your message..." type="text" name="Message" id="input" />
+        <button class="message-button" id="go" type="submit">Go</button>
     </div>
 </div>
 
 <script>
     $(document).ready(function () {
+        var newMessageDiv = $(".newMessages");
+        newMessageDiv.bind("click", function () {
+            scrollToBotton();
+        });
+        $("#results").scroll(function () {
+
+            if ($(".scrollable")[0].scrollHeight - ($(".scrollable").scrollTop() + $(".scrollable").height())  < $(".message").last().height()) {
+                newMessageDiv.hide();
+            }
+        });
         var prevCount = 0;
         function scrollToBotton() {
+            newMessageDiv.hide();
             $(".scrollable").scrollTop($(".scrollable")[0].scrollHeight);
         }
         var uri =  @Html.Raw(HttpUtility.JavaScriptStringEncode(
                   new Uri(new Uri(this.Context.Request.Url.GetLeftPart(UriPartial.Authority)),
                   Url.Content("~/Home/Messages")
                   ).ToString(), true));
-        function sendMessage(message) {
+        var first = true;
+        function sendMessage(message,fromMe) {
             prevCount = $(".message").length;
+            var scrollFromTop = $(".scrollable").scrollTop() + $(".scrollable").height();
+            var scrollHeight = $(".scrollable")[0].scrollHeight;
+            var lastMessageheight = $(".message").last().height();
             $("#results").load(uri, { Message: message }, function () {
                 if (message) {
                     $("#input")[0].value = "";
                 }
                 var count = $(".message").length;
-                if (count != prevCount) {
+                if ((count != prevCount && scrollHeight - scrollFromTop < lastMessageheight) || first || fromMe) {
+                    first = false;
+                    fromMe = false;
                     scrollToBotton();
                 }
+                if (count != prevCount && scrollHeight - scrollFromTop > lastMessageheight) {
+                    newMessageDiv.show();
+                }
+                else {
+                    if (!$(".newMessages").is(":visible"))
+                        newMessageDiv.hide();
+                }                
             });
         }
         function sendMessageFromInput() {
-            sendMessage($("#input")[0].value);
+            sendMessage($("#input")[0].value,true);
         }
         $("#go").bind("click", sendMessageFromInput);
         $("#input").bind("keypress", function (e) {
@@ -47,7 +73,7 @@
             }
         });
         function autoClick() {
-            sendMessage("");
+            sendMessage("", false);
         }
         autoClick();
         setInterval(autoClick, 1000);
