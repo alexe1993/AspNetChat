@@ -3,8 +3,10 @@
 @{
     ViewBag.Title = "Chat";
 }
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/Scripts/jquery.unobtrusive-ajax.js")
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<!--Ссылка на библиотеку SignalR -->
+<script src="~/Scripts/jquery.signalR-2.3.0.js"></script>
+<script src="~/signalr/hubs"></script>
 
 
 <div class="chat">
@@ -19,7 +21,10 @@
 
 <script>
     $(document).ready(function () {
+        var chat = $.connection.chutHub;
         var newMessageDiv = $(".newMessages");
+
+
         newMessageDiv.bind("click", function () {
             scrollToBotton();
         });
@@ -64,26 +69,35 @@
                     newMessageDiv.show();
                 }
                 else {
-                    if (!$(".newMessages").is(":visible"))
+                    if (!newMessageDiv.is(":visible"))
                         newMessageDiv.hide();
                 }
                 });
             });
+
         }
         function sendMessageFromInput() {
-            sendMessage($("#input")[0].value,true);
+            sendMessage($("#input")[0].value, true);
+            chat.server.send();
         }
         $("#go").bind("click", sendMessageFromInput);
         $("#input").bind("keypress", function (e) {
             if (e.keyCode ==13) {
                 sendMessageFromInput();
+                chat.server.send();
             }
         });
         function autoClick() {
             sendMessage("", false);
         }
+        chat.client.addMessage = function () {
+            autoClick();
+        }
+        $.connection.hub.start().done(function () {
+            chat.server.send();
+        });
         autoClick();
-        setInterval(autoClick, 1000);
+
     });
 </script>
 
