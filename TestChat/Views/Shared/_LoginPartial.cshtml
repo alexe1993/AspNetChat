@@ -5,7 +5,7 @@
     {
         @Html.AntiForgeryToken()
 
-        @Html.ActionLink("Hello, " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
+        @Html.ActionLink("Profile", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
 
         <a href="javascript:document.getElementById('logoutForm').submit()">Выйти</a>
     }

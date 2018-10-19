@@ -8,7 +8,10 @@ body {
 }
 
 .avatar {
-    width: 100px;
+    width: 40px;
+    border: 1px solid black;
+    border-radius:3px;
+
 }
 
 .scrollable {
@@ -23,6 +26,12 @@ body {
     grid-area: header;
     font-size: 80px;
     text-align: center;
+}
+.notSupportIe {
+    font-size: 80px;
+    height: 400px;
+    text-align:center;
+    padding-top:200px;
 }
 
 .menu {
@@ -88,7 +97,14 @@ body {
 }
 
 .message {
-    margin: 5px;
+    margin: 20px 5px 5px 5px;
+    display: flex;
+    justify-content:flex-start;
+    align-items:flex-start;
+}
+
+.text-content{
+    margin:0 0 0 5px;
 }
 
 .messages {
@@ -115,7 +131,8 @@ body {
 
 .message .inlet-text {
     font-weight: normal;
-    margin-left: 10px;
+    margin-top:10px;
+    word-break: break-all;
 }
 
 .chat {

@@ -3,11 +3,6 @@
 @{
     ViewBag.Title = "Chat";
 }
-<script src="~/Scripts/jquery-3.3.1.js"></script>
-<!--Ссылка на библиотеку SignalR -->
-<script src="~/Scripts/jquery.signalR-2.3.0.js"></script>
-<script src="~/signalr/hubs"></script>
-
 
 <div class="chat">
     <div id="results" class="results scrollable chat-view">
@@ -18,23 +13,28 @@
         <button class="message-button" id="go" type="submit">Go</button>
     </div>
 </div>
+<script src="~/signalr/hubs"></script>
 
 <script>
     $(document).ready(function () {
+
+        function formatString(number, digits) {
+            var numberString = "" + number;
+            while (numberString.length < digits)
+                numberString = "0" + digits;
+            return numberString;
+        }
         var chat = $.connection.chutHub;
         var newMessageDiv = $(".newMessages");
 
-
+        var myConnection = $.connection("/chat");
+        myConnection.start();
+        myConnection.received(function (data) {
+            console.log(data);
+        });
         newMessageDiv.bind("click", function () {
             scrollToBotton();
         });
-        $("#results").scroll(function () {
-
-            if ($(".scrollable")[0].scrollHeight - ($(".scrollable").scrollTop() + $(".scrollable").height())  < $(".message").last().height()) {
-                newMessageDiv.hide();
-            }
-        });
-        var prevCount = 0;
         function scrollToBotton() {
             newMessageDiv.hide();
             $(".scrollable").scrollTop($(".scrollable")[0].scrollHeight);
@@ -43,61 +43,80 @@
                   new Uri(new Uri(this.Context.Request.Url.GetLeftPart(UriPartial.Authority)),
                   Url.Content("~/Home/Messages")
                   ).ToString(), true));
-                var uri1 =  @Html.Raw(HttpUtility.JavaScriptStringEncode(
+        var loadPrevMessages =  @Html.Raw(HttpUtility.JavaScriptStringEncode(
+                  new Uri(new Uri(this.Context.Request.Url.GetLeftPart(UriPartial.Authority)),
+                  Url.Content("~/Home/GetPreviousMessages")
+                  ).ToString(), true)); var uri1 =  @Html.Raw(HttpUtility.JavaScriptStringEncode(
                   new Uri(new Uri(this.Context.Request.Url.GetLeftPart(UriPartial.Authority)),
                   Url.Content("~/Home/GetLastMessageCount")
                   ).ToString(), true));
-        var first = true;
-        function sendMessage(message,fromMe) {
-            prevCount = $(".message").length;
-            var scrollFromTop = $(".scrollable").scrollTop() + $(".scrollable").height();
-            var scrollHeight = $(".scrollable")[0].scrollHeight;
-            var lastMessageheight = $(".message").last().height();
-            $.get(uri1, function (data) {
-                if (prevCount == parseInt(data)&&!message) return;
-            $("#results").load(uri, { Message: message }, function () {
-                if (message) {
-                    $("#input")[0].value = "";
-                }
-                var count = $(".message").length;
-                if ((count != prevCount && scrollHeight - scrollFromTop < lastMessageheight) || first || fromMe) {
-                    first = false;
-                    fromMe = false;
-                    scrollToBotton();
-                }
-                if (count != prevCount && scrollHeight - scrollFromTop > lastMessageheight) {
-                    newMessageDiv.show();
-                }
-                else {
-                    if (!newMessageDiv.is(":visible"))
-                        newMessageDiv.hide();
-                }
-                });
-            });
+        var sendMessageUrl =  @Html.Raw(HttpUtility.JavaScriptStringEncode(
+                  new Uri(new Uri(this.Context.Request.Url.GetLeftPart(UriPartial.Authority)),
+                  Url.Content("~/Home/SendMessage")
+                  ).ToString(), true));
 
+        $("#results").scroll(function () {
+            if ($(".scrollable").scrollTop() == 0) {
+                var id = $(".id").first().text();
+                $.get(loadPrevMessages, { id: id }, function (data) {
+                    $(".results").prepend(data);
+                    var v = $(".id:contains('" + id + "')").parent().text();
+                    var top = $(".id:contains('" + id + "')").parent().position().top;
+                    $(".scrollable").scrollTop(top);
+                });
+            }
+            if ($(".scrollable")[0].scrollHeight - ($(".scrollable").scrollTop() + $(".scrollable").height()) < $(".message").last().height()) {
+                newMessageDiv.hide();
+            }
+        });
+        $("#results").load(uri, { MessagesCount: 10 }, function () {
+            scrollToBotton();});
+        function sendMessage(message) {
+            $.get(sendMessageUrl, { Message: message, MessageStatus: "New" }, function () {
+                $("#input")[0].value = "";
+            });
         }
         function sendMessageFromInput() {
-            sendMessage($("#input")[0].value, true);
-            chat.server.send();
+            sendMessage($("#input")[0].value);
         }
         $("#go").bind("click", sendMessageFromInput);
         $("#input").bind("keypress", function (e) {
-            if (e.keyCode ==13) {
+            if (e.keyCode == 13) {
                 sendMessageFromInput();
-                chat.server.send();
             }
         });
-        function autoClick() {
-            sendMessage("", false);
-        }
-        chat.client.addMessage = function () {
-            autoClick();
+        chat.client.addMessage = function (message) {
+            function getLementsHtml(message) {
+                var date = new Date(message.Time);
+                return "<div class=\"message\">" +
+                    "<img class=\"avatar\" src=\"/Account/GetImage?email=" + encodeURIComponent(message.User) + "\"/>" +
+                    "<div class=\"text-content\">" +
+                    "<span class=\"name\">" +
+                    message.User +
+                    " </span>" +
+                    "<span class=\"time\">" +
+                    formatString(date.getHours(), 2) + ":" +
+                    formatString(date.getMinutes(), 2) + ":" +
+                    formatString(date.getSeconds(), 2) +
+                    "</span>" +
+                    "<div class=\"inlet-text\">" +
+                    message.Message +
+                    "</div>" +
+                    "<div class=\"id\" hidden=\"hidden\">" +
+                    message.Id +
+                    "</div></div></div>";
+            }
+            var currentScrollHeight = $(".scrollable").scrollTop() + $(".scrollable").height();
+            var totalScrollHeight = $(".scrollable")[0].scrollHeight;
+            var lastMessageHeight = $(".message").last().height();
+            var inBottom = totalScrollHeight - currentScrollHeight < lastMessageHeight;
+            $(".results").append(getLementsHtml(message));
+            if (inBottom)
+                $(".scrollable").animate({ scrollTop: $(".scrollable")[0].scrollHeight},500);
+             //   scrollToBotton();
         }
         $.connection.hub.start().done(function () {
-            chat.server.send();
         });
-        autoClick();
 
     });
 </script>
-

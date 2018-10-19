@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Security;
 
 namespace TestChat.Hubs
 {
@@ -10,7 +11,7 @@ namespace TestChat.Hubs
     {
         public void Send()
         {
-            Clients.All.addMessage();
+            Clients.All.addMessage("test");
         }
     }
 }

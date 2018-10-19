@@ -1,17 +1,21 @@
 ﻿@using TestChat.Models.ViewModels
-@model ChatViewModel
+@model IEnumerable<MessageViewModel>
 @{
     ViewBag.Title = "Chat";
 }
-@if (Model?.Messages != null)
+@if (Model != null)
 {
-    foreach (var message in Model?.Messages)
-        {
-            <div class="message">
+    foreach (var message in Model)
+    {
+        <div class="message">
+            <img class="avatar" src="@Url.Action("GetImage", "Account", new { email = message.User })"/>
+            <div class="text-content">
                 <span class="name">@message.User</span>
-                <span class="time">@message.Time</span>
+                <span class="time">@message.Time.ToString("hh:mm:ss")</span>
                 <div class="inlet-text">@message.Message</div>
-                <br />
+                <div class="id" hidden="hidden">@message.Id</div>
             </div>
-        }
+            <br />
+        </div>
+    }
 }
