@@ -4,11 +4,32 @@
 }
 
 <h2>UploadImage</h2>
+<div class="drop-files" >
+    <div class="start-draggin-file-message" hidden="hidden">Drag files here</div>
+    <div class="drop-file-message" hidden="hidden">Drop files here</div>
+</div>
 <div>
-    <img src="@Url.Action("GetCurrencUserImage", "Account")">
+    <img class="avatar-big" src="@Url.Action("GetCurrencUserImage", "Account")">
 </div>
 @using (Html.BeginForm("UploadImage", "Manage", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     <input type="file" name="upload" /><br>
     <input type="submit" value="Загрузить" />
 }
+<script>
+    $(document).ready(function () {
+        var counter = 0;
+        $("body").on("dragenter", function (e) {
+            counter++;
+            $(".start-draggin-file-message").show(0);
+        });
+        $("body").on("dragleave", function (e) {
+            counter--;
+            if (counter == 0) {
+                $(".start-draggin-file-message").hide(0);
+                $(".drop-file-message").hide(0);
+            }
+        });
+        $(".drop-files").show(0);
+    });
+</script>
