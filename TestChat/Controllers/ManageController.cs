@@ -56,7 +56,32 @@ namespace TestChat.Controllers
         }
 
         [HttpPost]
-        public ActionResult UploadImage(HttpPostedFileBase upload)
+        public ActionResult UpdateImage (HttpPostedFileBase upload,string action)
+        {
+            var userEmail = HttpContext.GetOwinContext().Authentication.User.Identity.Name;
+            var user = _applicationDbContext.Users.FirstOrDefault(item => item.Email == userEmail);
+            if (action == "upload")
+            {
+                if (upload != null)
+                {
+                    byte[] bytes = new byte[upload.InputStream.Length];
+                    upload.InputStream.Read(bytes, 0, bytes.Length);
+                    user.Avatar = bytes;
+                    _applicationDbContext.Entry(user).State = System.Data.Entity.EntityState.Modified;
+                    _applicationDbContext.SaveChanges();
+                }
+            }
+            else if (action == "delete")
+            {
+                user.Avatar = null;
+                _applicationDbContext.Entry(user).State = System.Data.Entity.EntityState.Modified;
+                _applicationDbContext.SaveChanges();
+            }
+            return View("UploadImage");
+        }
+
+        [HttpPost]
+        public ActionResult Upload(HttpPostedFileBase upload)
         {
             if (upload != null)
             {
@@ -68,7 +93,7 @@ namespace TestChat.Controllers
                 _applicationDbContext.Entry(user).State = System.Data.Entity.EntityState.Modified;
                 _applicationDbContext.SaveChanges();
             }
-            return View();
+            return Json(new { success = true });
         }
 
         //

@@ -39,26 +39,11 @@
             newMessageDiv.hide();
             $(".scrollable").scrollTop($(".scrollable")[0].scrollHeight);
         }
-        var uri =  @Html.Raw(HttpUtility.JavaScriptStringEncode(
-                  new Uri(new Uri(this.Context.Request.Url.GetLeftPart(UriPartial.Authority)),
-                  Url.Content("~/Home/Messages")
-                  ).ToString(), true));
-        var loadPrevMessages =  @Html.Raw(HttpUtility.JavaScriptStringEncode(
-                  new Uri(new Uri(this.Context.Request.Url.GetLeftPart(UriPartial.Authority)),
-                  Url.Content("~/Home/GetPreviousMessages")
-                  ).ToString(), true)); var uri1 =  @Html.Raw(HttpUtility.JavaScriptStringEncode(
-                  new Uri(new Uri(this.Context.Request.Url.GetLeftPart(UriPartial.Authority)),
-                  Url.Content("~/Home/GetLastMessageCount")
-                  ).ToString(), true));
-        var sendMessageUrl =  @Html.Raw(HttpUtility.JavaScriptStringEncode(
-                  new Uri(new Uri(this.Context.Request.Url.GetLeftPart(UriPartial.Authority)),
-                  Url.Content("~/Home/SendMessage")
-                  ).ToString(), true));
 
         $("#results").scroll(function () {
             if ($(".scrollable").scrollTop() == 0) {
                 var id = $(".id").first().text();
-                $.get(loadPrevMessages, { id: id }, function (data) {
+                $.get("@Url.Action("GetPreviousMessages","Home")", { id: id }, function (data) {
                     $(".results").prepend(data);
                     var v = $(".id:contains('" + id + "')").parent().text();
                     var top = $(".id:contains('" + id + "')").parent().position().top;
@@ -69,10 +54,10 @@
                 newMessageDiv.hide();
             }
         });
-        $("#results").load(uri, { MessagesCount: 10 }, function () {
+        $("#results").load("@Url.Action("Messages","Home")", { MessagesCount: 10 }, function () {
             scrollToBotton();});
         function sendMessage(message) {
-            $.get(sendMessageUrl, { Message: message, MessageStatus: "New" }, function () {
+            $.get("@Url.Action("SendMessage", "Home")", { Message: message, MessageStatus: "New" }, function () {
                 $("#input")[0].value = "";
             });
         }

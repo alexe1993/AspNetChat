@@ -4,32 +4,56 @@
 }
 
 <h2>UploadImage</h2>
-<div class="drop-files" >
+<div class="drop-files">
     <div class="start-draggin-file-message" hidden="hidden">Drag files here</div>
-    <div class="drop-file-message" hidden="hidden">Drop files here</div>
 </div>
 <div>
     <img class="avatar-big" src="@Url.Action("GetCurrencUserImage", "Account")">
 </div>
-@using (Html.BeginForm("UploadImage", "Manage", FormMethod.Post, new { enctype = "multipart/form-data" }))
+@using (Html.BeginForm("UpdateImage", "Manage", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     <input type="file" name="upload" /><br>
-    <input type="submit" value="Загрузить" />
+    <button name="action" value="upload">Upload</button><br>
+    <button name="action" value="delete">Delete</button><br>
 }
 <script>
     $(document).ready(function () {
         var counter = 0;
-        $("body").on("dragenter", function (e) {
+        $("html").on("dragenter", function (e) {
             counter++;
             $(".start-draggin-file-message").show(0);
         });
-        $("body").on("dragleave", function (e) {
+        $("html").on("dragover", function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        });
+
+        $("html").on("dragleave", function (event) {
             counter--;
             if (counter == 0) {
                 $(".start-draggin-file-message").hide(0);
-                $(".drop-file-message").hide(0);
             }
         });
-        $(".drop-files").show(0);
+
+        $(".start-draggin-file-message").on("drop", function (e) {
+
+            event.preventDefault();
+            $(".start-draggin-file-message").hide(0);
+            counter = 0;
+            var file = event.dataTransfer.files[0];
+            var form_data = new FormData();
+            form_data.append('upload', file);
+            $.ajax({
+                url: "@Url.Action("Upload", "Manage")",
+                type: "post",
+                data: form_data,
+                contentType: false,
+                processData: false,
+                dataType: 'json',
+                success: function (response) {
+                    location.replace("@Url.Action("UploadImage", "Manage")");
+                }
+            });
+        });
     });
 </script>
