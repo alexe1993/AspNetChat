@@ -8,52 +8,77 @@
     <div class="start-draggin-file-message" hidden="hidden">Drag files here</div>
 </div>
 <div>
-    <img class="avatar-big" src="@Url.Action("GetCurrencUserImage", "Account")">
+    <img id="image" class="avatar-big" src="@Url.Action("GetCurrencUserImage", "Account")">
 </div>
 @using (Html.BeginForm("UpdateImage", "Manage", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
-    <input type="file" name="upload" /><br>
-    <button name="action" value="upload">Upload</button><br>
-    <button name="action" value="delete">Delete</button><br>
+    <input id="upload_hidden" type="file" accept="image/*" name="upload" /><br>
+    <input type="text" readonly="readonly" id="upload_visible" />
+    <button id="select_file" name="action" value="upload">Slect file</button>
+    <button name="action" value="upload">Upload</button>
+    <button name="action" value="delete">Delete</button>
+    @*< input type="file" name="upload" id="upload_hidden"
+
+
+           onchange="document.getElementById('upload_visible').value = this.value;" />
+        <input type="text" readonly="1" id="upload_visible"
+               onclick="document.getElementById('upload_hidden').click();" />
+        <button onclick="document.getElementById('upload_hidden').click();">Обзор</button>*@
 }
 <script>
     $(document).ready(function () {
-        var counter = 0;
+                var counter = 0;
         $("html").on("dragenter", function (e) {
-            counter++;
+                    counter++;
             $(".start-draggin-file-message").show(0);
-        });
+                });
         $("html").on("dragover", function (event) {
             event.preventDefault();
             event.stopPropagation();
         });
 
         $("html").on("dragleave", function (event) {
-            counter--;
-            if (counter == 0) {
+        counter--;
+        if (counter == 0) {
                 $(".start-draggin-file-message").hide(0);
-            }
-        });
+        }
+    })
+        $("#select_file").on("click",
+            function () {
+                event.preventDefault();
+                event.stopPropagation();
+        document.getElementById('upload_hidden').click();
+            })
 
+        $("#upload_hidden").on("change", function (e) {
+            $("#upload_visible").val($(this).val());
+            var fileReader = new FileReader();
+            fileReader.onload = function (res) {
+                var v = res.target.result;
+                var output = document.getElementById('image');
+                output.src = fileReader.result;
+            };
+            fileReader.readAsDataURL($(this)[0].files[0]);
+           // $(".avatar-big").attr("src", URL.createObjectURL(e.target.files[0]))
+    });
         $(".start-draggin-file-message").on("drop", function (e) {
-
             event.preventDefault();
             $(".start-draggin-file-message").hide(0);
-            counter = 0;
-            var file = event.dataTransfer.files[0];
-            var form_data = new FormData();
-            form_data.append('upload', file);
+        counter = 0;
+        var file = event.dataTransfer.files[0];
+        var form_data = new FormData();
+        form_data.append('upload', file);
             $.ajax({
-                url: "@Url.Action("Upload", "Manage")",
+            url: "@Url.Action("Upload", "Manage")",
                 type: "post",
                 data: form_data,
                 contentType: false,
                 processData: false,
                 dataType: 'json',
                 success: function (response) {
-                    location.replace("@Url.Action("UploadImage", "Manage")");
-                }
-            });
+                location.replace("@Url.Action("UploadImage", "Manage")");
+            }
         });
+    });
     });
 </script>
