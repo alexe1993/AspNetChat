@@ -8,7 +8,9 @@
     foreach (var message in Model)
     {
         <div class="message">
-            <img class="avatar" src="@Url.Action("GetImage", "Account", new { email = message.User })"/>
+            <a href="@Url.Action("Profile", "Account",new {email=message.User })" class="img-cropper">
+                <img class="avatar" src="@Url.Action("GetImage", "Account", new { email = message.User })" />
+            </a>
             <div class="text-content">
                 <span class="name">@message.User</span>
                 <span class="time">@message.Time.ToString("hh:mm:ss")</span>

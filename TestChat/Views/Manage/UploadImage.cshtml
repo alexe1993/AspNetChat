@@ -2,7 +2,8 @@
 @{
     ViewBag.Title = "UploadImage";
 }
-
+@using TestChat.Models
+@model UploadImageViewModel
 <h2>UploadImage</h2>
 <div class="drop-files">
     <div class="start-draggin-file-message" hidden="hidden">Drag files here</div>
@@ -13,17 +14,10 @@
 @using (Html.BeginForm("UpdateImage", "Manage", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     <input id="upload_hidden" type="file" accept="image/*" name="upload" /><br>
-    <input type="text" readonly="readonly" id="upload_visible" />
     <button id="select_file" name="action" value="upload">Slect file</button>
-    <button name="action" value="upload">Upload</button>
-    <button name="action" value="delete">Delete</button>
-    @*< input type="file" name="upload" id="upload_hidden"
-
-
-           onchange="document.getElementById('upload_visible').value = this.value;" />
-        <input type="text" readonly="1" id="upload_visible"
-               onclick="document.getElementById('upload_hidden').click();" />
-        <button onclick="document.getElementById('upload_hidden').click();">Обзор</button>*@
+    <button id="save_button" name="action" value="upload" disabled>Save</button>
+    <button id="delete_button" name="action" value="delete">Delete</button>
+    <button name="action" value="cancel">Cancel</button>
 }
 <script>
     $(document).ready(function () {
@@ -36,30 +30,43 @@
             event.preventDefault();
             event.stopPropagation();
         });
-
+        var existImage = '@(Model?.ExistImage)';
+        if (existImage == 'False') {
+            $("#delete_button").prop("disabled",true);
+        }
         $("html").on("dragleave", function (event) {
         counter--;
-        if (counter == 0) {
+            if (counter == 0) {
                 $(".start-draggin-file-message").hide(0);
         }
-    })
+        })
+        var deleted = false;
+        $("#delete_button").on("click",
+            function () {
+                deleted = true;
+                $(".avatar-big").prop("src", "/Images/Empty.png");
+                $("#save_button").prop("disabled", false);
+                event.preventDefault();
+                event.stopPropagation();
+            });
         $("#select_file").on("click",
             function () {
                 event.preventDefault();
                 event.stopPropagation();
-        document.getElementById('upload_hidden').click();
+                document.getElementById('upload_hidden').click();
             })
 
         $("#upload_hidden").on("change", function (e) {
-            $("#upload_visible").val($(this).val());
             var fileReader = new FileReader();
             fileReader.onload = function (res) {
                 var v = res.target.result;
                 var output = document.getElementById('image');
                 output.src = fileReader.result;
+                $("#save_button").prop("disabled", false);
+                $("#delete_button").prop("disabled", false);
             };
             fileReader.readAsDataURL($(this)[0].files[0]);
-           // $(".avatar-big").attr("src", URL.createObjectURL(e.target.files[0]))
+           // $(".avatar-big").prop("src", URL.createObjectURL(e.target.files[0]))
     });
         $(".start-draggin-file-message").on("drop", function (e) {
             event.preventDefault();
@@ -67,7 +74,9 @@
         counter = 0;
         var file = event.dataTransfer.files[0];
         var form_data = new FormData();
-        form_data.append('upload', file);
+            form_data.append('upload', file);
+            if (deleted == true)
+                from_data = null;
             $.ajax({
             url: "@Url.Action("Upload", "Manage")",
                 type: "post",

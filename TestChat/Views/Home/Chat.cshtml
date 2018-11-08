@@ -36,7 +36,7 @@
             scrollToBotton();
         });
         function scrollToBotton() {
-            newMessageDiv.hide();
+            var v = $(".scrollable").scrollTop();
             $(".scrollable").scrollTop($(".scrollable")[0].scrollHeight);
         }
 
@@ -45,7 +45,6 @@
                 var id = $(".id").first().text();
                 $.get("@Url.Action("GetPreviousMessages","Home")", { id: id }, function (data) {
                     $(".results").prepend(data);
-                    var v = $(".id:contains('" + id + "')").parent().text();
                     var top = $(".id:contains('" + id + "')").parent().position().top;
                     $(".scrollable").scrollTop(top);
                 });
@@ -55,7 +54,8 @@
             }
         });
         $("#results").load("@Url.Action("Messages","Home")", { MessagesCount: 10 }, function () {
-            scrollToBotton();});
+            scrollToBotton();
+        });
         function sendMessage(message) {
             $.get("@Url.Action("SendMessage", "Home")", { Message: message, MessageStatus: "New" }, function () {
                 $("#input")[0].value = "";
@@ -73,8 +73,10 @@
         chat.client.addMessage = function (message) {
             function getLementsHtml(message) {
                 var date = new Date(message.Time);
-                return "<div class=\"message\">" +
+                var html= "<div class=\"message\">" +
+                    "<a href=\"/Account/Profile?email=" + encodeURIComponent(message.User) + "\" class=\"img-cropper\">"+
                     "<img class=\"avatar\" src=\"/Account/GetImage?email=" + encodeURIComponent(message.User) + "\"/>" +
+                    "</a>" +
                     "<div class=\"text-content\">" +
                     "<span class=\"name\">" +
                     message.User +
@@ -90,6 +92,7 @@
                     "<div class=\"id\" hidden=\"hidden\">" +
                     message.Id +
                     "</div></div></div>";
+                return html;
             }
             var currentScrollHeight = $(".scrollable").scrollTop() + $(".scrollable").height();
             var totalScrollHeight = $(".scrollable")[0].scrollHeight;
@@ -97,11 +100,10 @@
             var inBottom = totalScrollHeight - currentScrollHeight < lastMessageHeight;
             $(".results").append(getLementsHtml(message));
             if (inBottom)
-                $(".scrollable").animate({ scrollTop: $(".scrollable")[0].scrollHeight},500);
+               $(".scrollable").animate({ scrollTop: $(".scrollable")[0].scrollHeight},500);
              //   scrollToBotton();
         }
         $.connection.hub.start().done(function () {
         });
-
     });
 </script>

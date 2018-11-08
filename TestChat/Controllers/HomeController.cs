@@ -1,7 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using AutoMapper;
+using Newtonsoft.Json;
 using System;
 using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
@@ -148,10 +150,10 @@ namespace TestChat.Controllers
             }
         }
 
-        public ActionResult Messages(int MessagesCount=10)
+        public async Task<ActionResult> Messages(int MessagesCount=10)
         {
             string userEmail = HttpContext.GetOwinContext().Authentication.User.Identity.Name;
-            var Messages = applicationDbContext.ChatMessages.Select(item => new MessageViewModel()
+            var Messages =await Task.Factory.StartNew(()=> applicationDbContext.ChatMessages.Select(item => new MessageViewModel()
             {
                 Message = item.Text,
                 Time = item.Time,
@@ -160,7 +162,7 @@ namespace TestChat.Controllers
             }).
             OrderBy(item => item.Time).
             Skip(Math.Max(0, applicationDbContext.ChatMessages.Count() - MessagesCount)).
-            ToArray();
+            ToArray());
             return PartialView(Messages);
         }
 
@@ -169,6 +171,20 @@ namespace TestChat.Controllers
             string userEmail = HttpContext.GetOwinContext().Authentication.User.Identity.Name;
             ApplicationUser user = applicationDbContext.Users.FirstOrDefault(item => item.Email == userEmail);
             return user;
+        }
+
+        public ActionResult Canvas()
+        {
+            return View();
+        }
+
+        public ActionResult Snake()
+        {
+            return View();
+        }
+        public ActionResult Tetris()
+        {
+            return View();
         }
 
         public ActionResult Contact()

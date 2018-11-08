@@ -5,6 +5,11 @@ using Microsoft.Owin.Security;
 
 namespace TestChat.Models
 {
+    public class UploadImageViewModel
+    {
+        public bool ExistImage { get; set; }
+    }
+
     public class IndexViewModel
     {
         public bool HasPassword { get; set; }

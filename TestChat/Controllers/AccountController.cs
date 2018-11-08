@@ -66,6 +66,18 @@ namespace TestChat.Controllers
 
         }
 
+        [AllowAnonymous]
+        public ActionResult UserProfile(string email)
+        {
+            var user = _applicationDbContext.Users.FirstOrDefault(usr => usr.Email == email);
+            if (user?.Avatar == null)
+                return File("~/Images/Empty.png", "image/jpg");
+            else
+                return File(user.Avatar, "image/jpg");
+
+        }
+
+
         public ActionResult GetCurrencUserImage()
         {
             var email = HttpContext.GetOwinContext().Authentication.User.Identity.Name;

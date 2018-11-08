@@ -52,14 +52,13 @@ namespace TestChat.Controllers
 
         public ActionResult UploadImage()
         {
-            return View();
+            return View(new UploadImageViewModel() { ExistImage = GetUser().Avatar != null });
         }
 
         [HttpPost]
         public ActionResult UpdateImage (HttpPostedFileBase upload,string action)
         {
-            var userEmail = HttpContext.GetOwinContext().Authentication.User.Identity.Name;
-            var user = _applicationDbContext.Users.FirstOrDefault(item => item.Email == userEmail);
+            ApplicationUser user = GetUser();
             if (action == "upload")
             {
                 if (upload != null)
@@ -77,7 +76,14 @@ namespace TestChat.Controllers
                 _applicationDbContext.Entry(user).State = System.Data.Entity.EntityState.Modified;
                 _applicationDbContext.SaveChanges();
             }
-            return View("UploadImage");
+            return Redirect("UploadImage");
+        }
+
+        private ApplicationUser GetUser()
+        {
+            var userEmail = HttpContext.GetOwinContext().Authentication.User.Identity.Name;
+            var user = _applicationDbContext.Users.FirstOrDefault(item => item.Email == userEmail);
+            return user;
         }
 
         [HttpPost]

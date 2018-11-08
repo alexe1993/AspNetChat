@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .picture {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas width="480" height="480" class="picture" id="picture"></canvas>
+    <script>
+        var backgroundwidth = 10;
+        var backgroundHeight = 20;
+        var figureWidth = 4;
+        var figureHeight = 4;
+        var figure1 =
+            [
+                [0, 0, 1, 0],
+                [0, 0, 1, 0],
+                [0, 0, 1, 0],
+                [0, 0, 1, 0]
+            ];
+        var figure2 =
+            [
+                [0, 0, 0],
+                [1, 1, 0],
+                [0, 1, 1]
+            ];
+        var figure3 =
+            [
+                [0, 0, 0],
+                [1, 1, 1],
+                [0, 1, 0]
+            ];
+        var figure4 =
+            [
+                [0, 0, 0],
+                [0, 1, 1],
+                [1, 1, 0]
+            ];    
+			var figure5 =
+            [
+                [0, 1, 1],
+                [0, 1, 0],
+                [0, 1, 0]
+            ];			
+			var figure6 =
+            [
+                [1, 1, 0],
+                [0, 1, 0],
+                [0, 1, 0]
+            ];
+        var figures = [figure1, figure2, figure3, figure4,figure5,figure6];
+        function getNewEmptyFigure(width, height) {
+            var figure = [];
+            for (var i = 0; i < height; i++) {
+                figure[i] = [];
+            }
+            return figure;
+        }
+
+
+        function Figure(shape, size = 20) {
+            this.x = backgroundwidth / 2;
+            this.y = 0;
+            this.size = size;
+            this.shape = shape;
+            this.width = shape.length;
+            this.height = shape[0].length;
+//this.rot = true;
+            this.getRotatedShape = function () {
+                var rotatedFigure = getNewEmptyFigure(this.height, this.width);
+                if (this.width != this.height) return this.shape;
+                for (var i = 0; i < this.width; i++) {
+                    for (var j = 0; j < this.height; j++) {
+                        rotatedFigure[i][j] = this.shape[i][j];
+                    }
+                }
+                for (var i = 0; i < this.height / 2; i++) {
+                    for (var j = i; j < this.width - 1 - i; j++) {
+                        rotatedFigure[i][j] = this.shape[j][this.width - i - 1];
+                        rotatedFigure[j][this.width - i - 1] = this.shape[this.height - i - 1][this.width - j - 1] ;
+                        rotatedFigure[this.width - i - 1][this.height - j - 1] = this.shape[this.width - j - 1][i];
+                        rotatedFigure[this.width - j - 1][i] = this.shape[i][j];
+                    }
+                }
+                return rotatedFigure;
+            }
+
+            this.rotate = function () {
+                this.shape = this.getRotatedShape();
+            }
+
+            this.draw = function (ctx) {
+                ctx.fillStyle = 'rgb(0,0,0)';
+                for (var i = 0; i < this.height; i++)
+                    for (var j = 0; j < this.width; j++)
+                        if (this.shape[i][j] == 1)
+                            ctx.fillRect((this.x + j) * size+1, (this.y + i) * size+1, size-2, size-2);
+            };
+        }
+
+        function Background(width, height, size = 20) {
+            this.width = width;
+            this.height = height;
+            this.size = size;
+            this.background = getNewEmptyFigure(width, height);
+            this.draw = function (ctx) {
+                ctx.rect(0, 0, width * size, height * size);
+                ctx.stroke();
+                for (var i = 0; i < this.width; i++)
+                    for (var j = 0; j < this.height; j++)
+                        if (this.background[j][i])
+                            ctx.fillRect(i * size+1, j * size+1, size-2, size-2);
+            };
+            this.isIntersected = function (figure, xMod = 0, yMod = 0, isRotated = false) {
+                var shape = isRotated ? figure.getRotatedShape() : figure.shape;
+                for (var i = 0; i < figure.width; i++) {
+                    for (var j = 0; j < figure.height; j++) {
+                        if (shape[j][i])
+                            if (j + figure.y + yMod < 0 ||
+                                j + figure.y + yMod >= this.height ||
+                                i + figure.x + xMod < 0 ||
+                                i + figure.x + xMod >= this.width ||
+                                this.background[j + figure.y + yMod][i + figure.x + xMod])
+                                return true;
+                    }
+                }
+                return false;
+            }
+            this.addFigure = function (figure) {
+                for (var i = 0; i < figure.width; i++) {
+                    for (var j = 0; j < figure.height; j++) {
+                        if (figure.shape[i][j] == 1)
+                            this.background[i + figure.y][j + figure.x] = figure.shape[i][j];
+                    }
+                }
+            }
+            this.checkForFilledRow = function () {
+                var filleIndexes = [];
+                for (var i = 0; i < this.height; i++) {
+                    var filled = true;
+                    for (var j = 0; j < this.width; j++) {
+                        if (!this.background[i][j]) {
+                            filled = false;
+                            break;
+                        }
+                    }
+                    if (filled) {
+                        filleIndexes.push(i);
+                        filled = false;
+                    }
+                }
+                if (filleIndexes.length > 0) {
+                    for (var i = 0; i < filleIndexes.length; i++)
+                        this.background.splice(filleIndexes[i],1);
+
+                    for (var i = this.background.length; i < this.height; i++) {
+                        this.background.unshift([]);
+                    }
+                }
+            }
+        }
+
+        function getRandromFigure() {
+            return figures[Math.floor(Math.random() * figures.length)];
+        }
+
+        var background = new Background(backgroundwidth, backgroundHeight);
+        var canvas = document.getElementById("picture");
+        var ctx = canvas.getContext("2d");
+        var figure = new Figure(figure2);
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            figure.draw(ctx);
+            background.draw(ctx);
+        }
+        draw();
+        const upCode = 38;
+        const leftCode = 37;
+        const rightCode = 39;
+        const downCode = 40;
+        function update(e) {
+            background.checkForFilledRow();
+            var xmod = 0;
+            var ymod = 0;
+            if (e && e.keyCode != downCode) {
+                if (e.keyCode == upCode) {
+                    if (!background.isIntersected(figure, 0, 0, true))
+                        figure.rotate();
+                }
+
+                if (e.keyCode == leftCode) {
+                    xmod = -1;
+                }
+                else if (e.keyCode == rightCode) {
+                    xmod = 1;
+                }
+                if (!background.isIntersected(figure, xmod, ymod)) {
+                    figure.x += xmod;
+                }
+            }
+            else {
+                ymod = +1;
+                if (!background.isIntersected(figure, xmod, ymod)) {
+                    figure.y += ymod;
+                }
+                else {
+                    background.addFigure(figure);
+                    figure = new Figure(getRandromFigure());
+                }
+            }
+                draw();
+            }
+            setInterval(update, 500);
+            var body = document.getElementsByTagName("body")[0];
+            body.addEventListener("keydown", function (e) {
+                update(e);
+                e.preventDefault();
+            });
+
+    </script>
+</body>
+</html>

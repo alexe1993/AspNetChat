@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style type="text/css">
+        .picture {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas width="480" height="480" class="picture" id="canvas"></canvas>
+</body>
+<script>
+    class Vector {
+        constructor(x, y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+    class Snake {
+        constructor(size, width, height) {
+            this.size = size;
+            var point = new Vector(1, 1);
+            this.width = width;
+            this.height = height;
+            this.widthPoints = Math.floor(this.width / this.size)-1;
+            this.heightPoints = Math.floor(this.height / this.size)-1;
+            this.to = new Vector(1, 0);
+            this.tail = new Array(point);
+            this.addApple();
+            this.resetGame();
+        }
+        addApple() {
+            if (!this.apples) {
+                this.apples = new Array();
+            }
+            var apple = new Vector(Math.floor(Math.random() * this.widthPoints), Math.floor(Math.random() * this.heightPoints));
+            this.apples.push(apple);
+        }
+
+        draw(canvas) {
+            canvas.clearRect(0, 0, this.width, this.height);
+            canvas.fillStyle = 'rgb(0,0,200)';
+            for (var i = 0; i < this.tail.length; i++) {
+                canvas.fillRect(this.tail[i].x * this.size, this.tail[i].y * this.size, this.size, this.size);
+
+            }
+            canvas.fillStyle = 'rgb(0,200,0)';
+            canvas.fillFont = "30px Arial";
+            for (var i = 0; i < this.apples.length; i++) {
+                canvas.fillRect(this.apples[i].x * this.size, this.apples[i].y * this.size, this.size, this.size);
+            }
+            canvas.fillStyle = 'rgba(200,0,0,50)';
+            canvas.font = this.size*2+"px Arial";
+            canvas.fillText("Apples ate: " + this.ateApples + ". Speed: "+this.snakeSpeed, this.size, this.height - this.size);
+
+        }
+
+        addNew(direction) {
+            if (direction) {
+                var prevTo = this.to;
+                this.to = new Vector(0, 0);
+                switch (direction) {
+                    case 39:
+                        this.to.x = 1;
+                        break;
+                    case 40:
+                        this.to.y = 1;
+                        break;
+                    case 38:
+                        this.to.y = -1;
+                        break;
+                    case 37:
+                        this.to.x = -1;
+                        break;
+                    default:
+                        break;
+                }
+                if (this.to.x != 0 && this.to.x == -prevTo.x)
+                    this.to.x = -this.to.x;
+                if (this.to.y != 0 && this.to.y == -prevTo.y)
+                    this.to.y = -this.to.y;
+            }
+            var lastPoint = this.tail[this.tail.length - 1];
+            var prevLastPoint = this.tail[this.tail.length - 2];
+            if (lastPoint) {
+                var newPoint = new Vector(lastPoint.x + this.to.x, lastPoint.y + this.to.y);
+                if (newPoint.x > this.widthPoints)
+                    newPoint.x = 0;
+                if (newPoint.x < 0)
+                    newPoint.x = this.widthPoints;
+
+                if (newPoint.y > this.heightPoints)
+                    newPoint.y = 0;
+                if (newPoint.y < 0)
+                    newPoint.y = this.heightPoints;
+                this.tail.push(newPoint);
+
+            }
+        }
+
+        resetGame() {
+            this.tail = new Array(new Vector(1, 0), new Vector(2, 0), new Vector(3, 0));
+            this.apples = new Array();
+            this.ateApples = 0;
+            this.snakeSpeed = 1;
+            this.appleSpeed = 0.4;
+        }
+
+        move(direction) {
+            this.addNew(direction);
+            var adding;
+            var lastPoint = this.tail[this.tail.length - 1];
+            for (var i = 0; i < this.tail.length - 2; i++) {
+                if (this.tail[i].x == lastPoint.x && this.tail[i].y == lastPoint.y) {
+                    this.resetGame();
+                    return;
+                }
+            }
+            for (var i = 0; i < this.apples.length; i++) {
+                if (this.apples[i].x == lastPoint.x && this.apples[i].y == lastPoint.y) {
+                    adding = true;
+                    this.snakeSpeed ++;
+                    this.apples.splice(i, 1);
+                    this.ateApples++;
+                    break;
+                }
+            }
+            if (!adding)
+                this.tail.shift();
+        }
+    }
+
+    var canvas = document.getElementById('canvas');
+    var snake = new Snake(5, canvas.width, canvas.height);
+    function draw(key) {
+        if (canvas.getContext) {
+            ctx = canvas.getContext('2d');
+            snake.move(key);
+            snake.draw(ctx);
+        } else { }
+    }
+    function getMilliseconds() {
+        var date = new Date();
+        return date.getTime();
+    }
+    var prevMilliseconds = getMilliseconds();
+    var prevAppleMilliseconds = getMilliseconds();
+    function update() {
+        var nowMilliseconds = getMilliseconds();
+        if (nowMilliseconds - prevMilliseconds > 1 / snake.snakeSpeed * 1000) {
+            prevMilliseconds = nowMilliseconds;
+            draw();
+        }
+        if (nowMilliseconds - prevAppleMilliseconds > 1 / snake.appleSpeed * 1000) {
+            prevAppleMilliseconds = nowMilliseconds;
+            updateApples();
+        }
+    }
+    draw();
+    function updateApples() {
+        snake.addApple();
+    }
+    setInterval(update, 10);
+    var body = document.getElementsByTagName("body")[0];
+    body.addEventListener("keydown", function (e) {
+        draw(e.keyCode);
+        e.preventDefault();
+        e.stopPropagation();
+    });
+    var asdf = new Vector();
+</script>
+</html>

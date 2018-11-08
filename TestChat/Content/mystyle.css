@@ -8,9 +8,23 @@ body {
 }
 
 .avatar {
+    display: inline;
+    margin: 0 auto;
+    height: 100%;
+    width: auto;
+}
+.img-cropper {
     width: 40px;
+    border: 2px solid black;
+    border-radius: 3px;
+    padding: 1px 1px 1px 1px;
+}
+.img-cropper {
+    width: 40px;
+    height: 40px;
     border: 1px solid black;
-    border-radius:3px;
+    border-radius: 3px;
+    padding: 2px 2px 2px 2px;
 }
 .avatar-big {
     max-width: 640px;
@@ -82,24 +96,36 @@ body {
 
 .message-text {
     grid-column: 1;
+    height:40px;
+    padding:0 0 0 0;
+    margin:0 0 0 0;
 }
 
 .message-button {
     grid-column: 2;
-}
-
-.menu a {
-    padding: 5px;
-    font-size: 20px;
+    width: 40px;
     height: 40px;
-    line-height: 40px;
-    text-align: start;
-    display: block;
-    vertical-align: central;
-    font-weight: bold;
-    color: black;
-    width: 150px;
+    border-width: 0px;
+    font-weight: 600;
+    align-self: center;
+    align-self: center;
 }
+    .message-button:hover {
+        font-weight: 800;
+    }
+
+    .menu a {
+        padding: 5px;
+        font-size: 20px;
+        height: 40px;
+        line-height: 40px;
+        text-align: start;
+        display: block;
+        vertical-align: central;
+        font-weight: bold;
+        color: black;
+        width: 150px;
+    }
 
     .menu a:hover:before {
         content: "•";
@@ -114,7 +140,7 @@ body {
 .chat-input {
     grid-area: chat-input;
     display: grid;
-    grid-template-columns: auto 80px;
+    grid-template-columns: auto 40px;
     grid-template-rows: 40px;
 }
 
@@ -122,6 +148,9 @@ body {
     position: relative;
 }
 
+.hidden{
+    visibility:collapse;
+}
 .message {
     margin: 20px 5px 5px 5px;
     display: flex;
@@ -131,6 +160,12 @@ body {
 
 .text-content{
     margin:0 0 0 5px;
+}
+
+.picture{
+    width:400px;
+    height:400px;
+    border:1px solid black;
 }
 
 .messages {
@@ -194,15 +229,18 @@ input {
         font-weight: bold;
         cursor: pointer;
     }
-
-        button, input[type="submit"]:hover {
+    
+    button, input[type="submit"]:hover {
             border-width: 2px;
-        }
 
-@media (min-width: 1280px) {
-    .container {
-        grid-template-columns: 250px 700px 250px;
     }
+    button:disabled{
+        background-color:lightgray;
+    }
+    @media (min-width: 1280px) {
+        .container {
+            grid-template-columns: 250px 700px 250px;
+        }
 }
 
 @media (min-width: 1001px) {

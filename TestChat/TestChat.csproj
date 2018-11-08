@@ -325,6 +325,8 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Content\mystyle.css" />
+    <None Include="Views\Home\Snake.cshtml" />
+    <None Include="Views\Home\Tetris.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -366,6 +368,7 @@
     <Content Include="Views\Home\TestForm.cshtml" />
     <Content Include="Views\Home\Messages.cshtml" />
     <Content Include="Views\Errors\IeError.cshtml" />
+    <Content Include="Views\Home\Canvas.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201809110743344_first.resx">
